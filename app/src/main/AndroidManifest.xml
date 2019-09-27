@@ -10,7 +10,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".screens.SplashActivity">
+        <activity android:name=".screens.MainActivity"></activity>
+        <activity
+            android:name=".screens.SplashActivity"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
@@ -21,7 +24,7 @@
         <activity
             android:name=".screens.ProfileActivity"
             android:label="Profile" />
-        <activity android:name=".screens.MainActivity"></activity>
+        <activity android:name=".screens.TranslateActivity" />
     </application>
 
 </manifest>

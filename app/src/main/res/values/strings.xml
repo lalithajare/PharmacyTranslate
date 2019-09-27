@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Translator</string>
+    <string name="app_name">Pharmacy</string>
     <string name="translate">Translate</string>
     <string name="enter_your_text_in_eng">Enter you text in english</string>
     <string name="output">Output</string>
@@ -13,4 +13,6 @@
     <string name="plz_enter_weight">Please enter weight</string>
     <string name="plz_enter_height">Please enter height</string>
     <string name="plz_enter_name">Please enter name</string>
+    <string name="translate_my_med">Translate My Medicine</string>
+    <string name="my_medicines">My Medicines</string>
 </resources>
