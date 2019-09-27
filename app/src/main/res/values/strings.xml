@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Translator</string>
+    <string name="translate">Translate</string>
+    <string name="enter_your_text_in_eng">Enter you text in english</string>
+    <string name="output">Output</string>
+    <string name="plz_wt_let_models_dwnld">Please wait, let language models download</string>
+</resources>
