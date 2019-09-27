@@ -1,13 +1,12 @@
-package com.translator.app
+package com.translator.app.adapters
 
 import android.content.Context
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import android.R
 import android.widget.BaseAdapter
 import android.widget.TextView
-import android.graphics.Color.parseColor
+import com.translator.app.models.Language
 
 
 class LanguageAdapter(var mContext: Context, var list: List<Language>) : BaseAdapter() {

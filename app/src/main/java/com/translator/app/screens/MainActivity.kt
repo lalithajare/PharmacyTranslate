@@ -1,5 +1,6 @@
-package com.translator.app
+package com.translator.app.screens
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -14,26 +15,39 @@ import com.google.firebase.ml.naturallanguage.translate.FirebaseTranslateLanguag
 import com.google.firebase.ml.naturallanguage.translate.FirebaseTranslateModelManager
 import com.google.firebase.ml.naturallanguage.translate.FirebaseTranslateRemoteModel
 import com.google.firebase.ml.naturallanguage.translate.FirebaseTranslatorOptions
-import androidx.annotation.NonNull
 import com.google.android.gms.tasks.OnFailureListener
-import com.google.android.gms.tasks.OnSuccessListener
-import com.google.firebase.ml.naturallanguage.languageid.FirebaseLanguageIdentification
-import androidx.core.app.ComponentActivity
-import androidx.core.app.ComponentActivity.ExtraData
-import androidx.core.content.ContextCompat.getSystemService
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
+import com.translator.app.models.Language
+import com.translator.app.adapters.LanguageAdapter
+import com.translator.app.R
 
 
 class MainActivity : AppCompatActivity() {
+
+    companion object {
+        fun beginActivity(activity: AppCompatActivity) {
+            activity.startActivity(Intent(activity, MainActivity::class.java))
+        }
+    }
 
     enum class LangCode(var code: String) {
         KOREAN("ko"), VIETNAMESE("vi"), ENGLISH("en")
     }
 
     private val languageList = arrayListOf<Language>(
-        Language(LangCode.KOREAN.code, "Korean")
-        , Language(LangCode.VIETNAMESE.code, "Vietnamese")
-        , Language(LangCode.ENGLISH.code, "English")
+        Language(
+            LangCode.KOREAN.code,
+            "Korean"
+        )
+        ,
+        Language(
+            LangCode.VIETNAMESE.code,
+            "Vietnamese"
+        )
+        ,
+        Language(
+            LangCode.ENGLISH.code,
+            "English"
+        )
     )
 
     private lateinit var edtInputText: EditText
@@ -114,6 +128,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Automatically detects the entered text's language and translates it to English
+     */
     private fun detectAndTranslateLanguage() {
         var options: FirebaseTranslatorOptions? = null
 
@@ -137,7 +154,7 @@ class MainActivity : AppCompatActivity() {
                 translator.translate(edtInputText.text.toString().trim())
                     .addOnSuccessListener { text ->
                         txtOutputText.text = text
-                        
+
                     }
             }
             .addOnFailureListener(
