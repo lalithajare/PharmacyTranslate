@@ -137,6 +137,7 @@ class MainActivity : AppCompatActivity() {
                 translator.translate(edtInputText.text.toString().trim())
                     .addOnSuccessListener { text ->
                         txtOutputText.text = text
+                        
                     }
             }
             .addOnFailureListener(
