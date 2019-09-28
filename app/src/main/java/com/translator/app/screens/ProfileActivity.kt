@@ -36,6 +36,7 @@ class ProfileActivity : AppCompatActivity() {
                 setValues()
                 Prefs.user = user
                 MainActivity.beginActivity(this)
+                finish()
             }
         }
     }

@@ -18,6 +18,7 @@ class SplashActivity : AppCompatActivity() {
             } else {
                 MainActivity.beginActivity(this)
             }
+            finish()
         }, 3000)
 
     }

@@ -10,7 +10,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".screens.MainActivity"></activity>
+        <activity
+            android:name=".screens.MedicineListActivity"
+            android:label="My Medicines" />
+        <activity
+            android:name=".screens.AddMedicineActivity"
+            android:label="My Medicine" />
+        <activity
+            android:name=".screens.MainActivity"
+            android:label="Home" />
         <activity
             android:name=".screens.SplashActivity"
             android:theme="@style/AppTheme.NoActionBar">
@@ -24,7 +32,9 @@
         <activity
             android:name=".screens.ProfileActivity"
             android:label="Profile" />
-        <activity android:name=".screens.TranslateActivity" />
+        <activity
+            android:name=".screens.TranslateActivity"
+            android:label="Translate" />
     </application>
 
 </manifest>

@@ -15,4 +15,8 @@
     <string name="plz_enter_name">Please enter name</string>
     <string name="translate_my_med">Translate My Medicine</string>
     <string name="my_medicines">My Medicines</string>
+    <string name="add_to_device">Add to Device</string>
+    <string name="name_of_medicine">Name of Medicine</string>
+    <string name="add_a_description">Add a Description</string>
+    <string name="translated">Translated</string>
 </resources>

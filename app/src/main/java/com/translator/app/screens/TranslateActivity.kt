@@ -15,10 +15,10 @@ import com.google.firebase.ml.naturallanguage.translate.FirebaseTranslateLanguag
 import com.google.firebase.ml.naturallanguage.translate.FirebaseTranslateModelManager
 import com.google.firebase.ml.naturallanguage.translate.FirebaseTranslateRemoteModel
 import com.google.firebase.ml.naturallanguage.translate.FirebaseTranslatorOptions
-import com.google.android.gms.tasks.OnFailureListener
 import com.translator.app.models.Language
 import com.translator.app.adapters.LanguageAdapter
 import com.translator.app.R
+import com.translator.app.models.Medicine
 
 
 class TranslateActivity : AppCompatActivity() {
@@ -54,11 +54,14 @@ class TranslateActivity : AppCompatActivity() {
     private lateinit var txtOutputText: TextView
     private lateinit var spnLanguage: AppCompatSpinner
     private lateinit var btnTranslate: Button
+    private lateinit var btnAdd: Button
 
 
     private lateinit var mAdapter: LanguageAdapter
     private var isVietnameseAvailable = false
     private var isKoreanAvailable = false
+
+    private var languageTranslated = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,6 +80,7 @@ class TranslateActivity : AppCompatActivity() {
         edtInputText = findViewById(R.id.edt_input_text)
         txtOutputText = findViewById(R.id.txt_output_text)
         btnTranslate = findViewById(R.id.btn_translate)
+        btnAdd = findViewById(R.id.btn_add)
     }
 
     /**
@@ -85,11 +89,19 @@ class TranslateActivity : AppCompatActivity() {
     private fun setViews() {
         btnTranslate.setOnClickListener {
             if (isKoreanAvailable && isVietnameseAvailable) {
-                translatedText()
+                translateText()
             } else {
                 Toast.makeText(this, getString(R.string.plz_wt_let_models_dwnld), Toast.LENGTH_LONG)
                     .show()
             }
+        }
+
+        btnAdd.setOnClickListener {
+            // Go to Add Medicine Activity
+            val medicine = Medicine()
+            medicine.medicineName = txtOutputText.text.toString().trim()
+            medicine.medicineLangCode = languageTranslated
+            AddMedicineActivity.beginActivity(this, medicine)
         }
     }
 
@@ -104,21 +116,28 @@ class TranslateActivity : AppCompatActivity() {
     /**
      * Start to the process of translation
      */
-    private fun translatedText() {
+    private fun translateText() {
         var options: FirebaseTranslatorOptions? = null
         when {
-            (spnLanguage.selectedItem as Language).langCode == LangCode.VIETNAMESE.code -> options =
-                FirebaseTranslatorOptions.Builder()
-                    .setSourceLanguage(FirebaseTranslateLanguage.EN)
-                    .setTargetLanguage(FirebaseTranslateLanguage.VI)
-                    .build()
-            (spnLanguage.selectedItem as Language).langCode == LangCode.KOREAN.code -> options =
-                FirebaseTranslatorOptions.Builder()
-                    .setSourceLanguage(FirebaseTranslateLanguage.EN)
-                    .setTargetLanguage(FirebaseTranslateLanguage.KO)
-                    .build()
+            (spnLanguage.selectedItem as Language).langCode == LangCode.VIETNAMESE.code -> {
+                options =
+                    FirebaseTranslatorOptions.Builder()
+                        .setSourceLanguage(FirebaseTranslateLanguage.EN)
+                        .setTargetLanguage(FirebaseTranslateLanguage.VI)
+                        .build()
+                languageTranslated = LangCode.VIETNAMESE.code
+            }
+            (spnLanguage.selectedItem as Language).langCode == LangCode.KOREAN.code -> {
+                options =
+                    FirebaseTranslatorOptions.Builder()
+                        .setSourceLanguage(FirebaseTranslateLanguage.EN)
+                        .setTargetLanguage(FirebaseTranslateLanguage.KO)
+                        .build()
+                languageTranslated = LangCode.KOREAN.code
+            }
             (spnLanguage.selectedItem as Language).langCode == LangCode.ENGLISH.code -> {
                 detectAndTranslateLanguage()
+                languageTranslated = LangCode.ENGLISH.code
                 return
             }
         }
@@ -137,13 +156,13 @@ class TranslateActivity : AppCompatActivity() {
         val languageIdentifier = FirebaseNaturalLanguage.getInstance().languageIdentification
         languageIdentifier.identifyLanguage(edtInputText.text.toString().trim())
             .addOnSuccessListener { languageCode ->
-                if (languageCode !== LangCode.KOREAN.code) {
+                if (languageCode == LangCode.KOREAN.code) {
                     options = FirebaseTranslatorOptions.Builder()
                         .setSourceLanguage(FirebaseTranslateLanguage.KO)
                         .setTargetLanguage(FirebaseTranslateLanguage.EN)
                         .build()
 
-                } else if (languageCode !== LangCode.VIETNAMESE.code) {
+                } else if (languageCode == LangCode.VIETNAMESE.code) {
                     options = FirebaseTranslatorOptions.Builder()
                         .setSourceLanguage(FirebaseTranslateLanguage.VI)
                         .setTargetLanguage(FirebaseTranslateLanguage.EN)
@@ -157,13 +176,10 @@ class TranslateActivity : AppCompatActivity() {
 
                     }
             }
-            .addOnFailureListener(
-                object : OnFailureListener {
-                    override fun onFailure(e: Exception) {
-                        // Model couldn’t be loaded or other internal error.
-                        // ...
-                    }
-                })
+            .addOnFailureListener {
+                // Model couldn’t be loaded or other internal error.
+                // ...
+            }
     }
 
 
@@ -180,7 +196,7 @@ class TranslateActivity : AppCompatActivity() {
 
                 //Check for Vietnamese
                 for (model in models) {
-                    if (model.languageCode.toLowerCase() == "vi") {
+                    if (model.languageCode.toLowerCase() == LangCode.VIETNAMESE.code) {
                         isVietnameseAvailable = true
                         break
                     }
@@ -188,7 +204,7 @@ class TranslateActivity : AppCompatActivity() {
 
                 //Check for Korean
                 for (model in models) {
-                    if (model.languageCode.toLowerCase() == "ko") {
+                    if (model.languageCode.toLowerCase() == LangCode.KOREAN.code) {
                         isKoreanAvailable = true
                         break
                     }

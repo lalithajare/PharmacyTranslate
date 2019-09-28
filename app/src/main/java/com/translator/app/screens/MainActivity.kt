@@ -15,23 +15,27 @@ class MainActivity : AppCompatActivity() {
     }
 
     private lateinit var linTranslate: LinearLayout
+    private lateinit var linMyMedicines: LinearLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
         initViews()
         setViews()
     }
 
     private fun initViews() {
         linTranslate = findViewById(R.id.lin_translate)
+        linMyMedicines = findViewById(R.id.lin_my_medicines)
     }
 
 
     private fun setViews() {
         linTranslate.setOnClickListener {
             TranslateActivity.beginActivity(this)
+        }
+        linMyMedicines.setOnClickListener {
+            MedicineListActivity.beginActivity(this)
         }
     }
 
