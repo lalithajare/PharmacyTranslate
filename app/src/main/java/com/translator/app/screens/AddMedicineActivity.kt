@@ -1,6 +1,7 @@
 package com.translator.app.screens
 
 import android.content.Intent
+import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -9,7 +10,6 @@ import android.widget.EditText
 import com.translator.app.R
 import com.translator.app.models.Medicine
 import com.translator.app.utils.MyApplication
-import java.util.*
 
 class AddMedicineActivity : AppCompatActivity() {
 
@@ -60,11 +60,22 @@ class AddMedicineActivity : AppCompatActivity() {
                         " Medicine Language Code : ${medicine.medicineLangCode}"
             )
 
+            InsertTask(medicine, this).execute()
+        }
+    }
 
-          
+    private class InsertTask(
+        var medicine: Medicine,
+        var addMedicineActivity: AddMedicineActivity
+    ) : AsyncTask<Void, Void, Void?>() {
+        override fun doInBackground(vararg params: Void?): Void? {
             MyApplication.getPharmacyDB().medicineDao().insertMedicine(medicine)
-            MedicineListActivity.beginActivity(this)
+            return null
+        }
 
+        override fun onPostExecute(result: Void?) {
+            super.onPostExecute(result)
+            MedicineListActivity.beginActivity(addMedicineActivity)
         }
     }
 }
