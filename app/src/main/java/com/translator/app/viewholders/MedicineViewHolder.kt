@@ -19,8 +19,8 @@ class MedicineViewHolder(var mView: View, var callBack: (Medicine) -> Unit) : Vi
         if (!mMedicine?.medicineName.isNullOrEmpty())
             txtMedicineName.text = mMedicine?.medicineName
 
-        if (mMedicine?.medicineLangCode !== TranslateActivity.LangCode.ENGLISH.code) {
-            txtTranslated.setText("${txtTranslated.text} (${mMedicine?.medicineLangCode})")
+        if (mMedicine?.medicineLangCode != TranslateActivity.LangCode.ENGLISH.code) {
+            txtTranslated.text = "${mView.context.getString(R.string.translated)} (${mMedicine?.medicineLangCode})"
             txtTranslated.visibility = View.VISIBLE
         } else {
             txtTranslated.visibility = View.GONE

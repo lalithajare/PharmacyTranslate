@@ -1,0 +1,7 @@
+package com.translator.app.utils
+
+import androidx.core.content.FileProvider
+
+class GenericFileProvider : FileProvider() {
+
+}

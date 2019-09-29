@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="@dimen/dimen_size_10">
+    android:padding="@dimen/dimen_size_5">
 
     <ImageView
         android:id="@+id/img_drug"
@@ -31,7 +31,7 @@
         android:id="@+id/txt_translated"
         style="@style/TextStyle"
         android:layout_below="@+id/txt_medicine_name"
-        android:layout_margin="@dimen/dimen_size_5"
+        android:layout_margin="@dimen/dimen_size_10"
         android:layout_toStartOf="@+id/img_right_arrow"
         android:layout_toLeftOf="@+id/img_right_arrow"
         android:text="@string/translated"

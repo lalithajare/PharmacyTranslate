@@ -1,11 +1,13 @@
 package com.translator.app.screens
 
+import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -30,6 +32,8 @@ class MedicineListActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private lateinit var rvMedicine: RecyclerView
+    private lateinit var txtNoItems: TextView
+
     private lateinit var mAdapter: MedicineAdapter
     private val medicineList = mutableListOf<Medicine>()
 
@@ -43,12 +47,13 @@ class MedicineListActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun initViews() {
         rvMedicine = findViewById(R.id.rv_medicine)
+        txtNoItems = findViewById(R.id.txt_no_items)
     }
 
     private fun setAdapter() {
         mAdapter = MedicineAdapter(medicineList) { medicine ->
             Log.d(TAG, "Medicine clicked : ${medicine.medicineName}")
-            MedicineDetailsActivity.beginActivity(this, medicine)
+            MedicineDetailsActivity.beginActivityForResult(this, medicine.medicineId)
         }
         rvMedicine.adapter = mAdapter
         rvMedicine.layoutManager = LinearLayoutManager(this)
@@ -63,7 +68,18 @@ class MedicineListActivity : AppCompatActivity(), View.OnClickListener {
             if (!list.isEmpty()) {
                 medicineList.addAll(list)
                 mAdapter.notifyDataSetChanged()
+                txtNoItems.visibility = View.GONE
+            } else {
+                txtNoItems.visibility = View.VISIBLE
             }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK) {
+            medicineList.clear()
+            loadMedicinesFromDB()
         }
     }
 

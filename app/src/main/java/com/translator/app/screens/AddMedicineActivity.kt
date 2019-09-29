@@ -65,23 +65,10 @@ class AddMedicineActivity : AppCompatActivity() {
                 val rowId = MyApplication.getPharmacyDB().medicineDao().insertMedicine(medicine)
                 if (rowId != 0L) {
                     MedicineListActivity.beginActivity(this@AddMedicineActivity)
+                    finish()
                 }
-//                addMedicine(this)
-//                MedicineListActivity.beginActivity(this@AddMedicineActivity)
-
             }
-//            addMedicine()
-//            MedicineListActivity.beginActivity(this@AddMedicineActivity)
         }
     }
-
-    /* private suspend fun addMedicine(coroutineScope: CoroutineScope): Job {
-         return CoroutineScope(coroutineScope.coroutineContext).launch {
-             val rowId = MyApplication.getPharmacyDB().medicineDao().insertMedicine(medicine)
-             if (rowId != 0L) {
-                 MedicineListActivity.beginActivity(this@AddMedicineActivity)
-             }
-         }
-     }*/
 
 }

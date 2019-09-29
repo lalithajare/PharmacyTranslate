@@ -1,8 +1,10 @@
 package com.translator.app.screens
 
+import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.TextUtils
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
@@ -15,17 +17,21 @@ import com.google.firebase.ml.naturallanguage.translate.FirebaseTranslateLanguag
 import com.google.firebase.ml.naturallanguage.translate.FirebaseTranslateModelManager
 import com.google.firebase.ml.naturallanguage.translate.FirebaseTranslateRemoteModel
 import com.google.firebase.ml.naturallanguage.translate.FirebaseTranslatorOptions
-import com.translator.app.models.Language
-import com.translator.app.adapters.LanguageAdapter
 import com.translator.app.R
+import com.translator.app.adapters.LanguageAdapter
+import com.translator.app.models.Language
 import com.translator.app.models.Medicine
 
-
-class TranslateActivity : AppCompatActivity() {
+class EditTranslateActivity : AppCompatActivity() {
 
     companion object {
-        fun beginActivity(activity: AppCompatActivity) {
-            activity.startActivity(Intent(activity, TranslateActivity::class.java))
+        val REQ_TRANSLATE = 78
+        val MEDICINE_OBJ = "medicine_obj"
+
+        fun beginActivityForResult(activity: AppCompatActivity, medicine: Medicine) {
+            val intent = Intent(activity, EditTranslateActivity::class.java)
+            intent.putExtra(MEDICINE_OBJ, medicine)
+            activity.startActivityForResult(intent, REQ_TRANSLATE)
         }
     }
 
@@ -54,7 +60,7 @@ class TranslateActivity : AppCompatActivity() {
     private lateinit var txtOutputText: TextView
     private lateinit var spnLanguage: AppCompatSpinner
     private lateinit var btnTranslate: Button
-    private lateinit var btnAdd: Button
+    private lateinit var btnUpdate: Button
 
 
     private lateinit var mAdapter: LanguageAdapter
@@ -63,11 +69,15 @@ class TranslateActivity : AppCompatActivity() {
 
     private var languageTranslated = ""
 
+    private var mMedicine: Medicine? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_translate)
+        setContentView(R.layout.activity_edit_translate)
+        mMedicine = intent.getSerializableExtra(MEDICINE_OBJ) as Medicine
         initViews()
         setViews()
+        setData()
         setAdapter()
         checkFirebaseLangModels()
     }
@@ -80,7 +90,7 @@ class TranslateActivity : AppCompatActivity() {
         edtInputText = findViewById(R.id.edt_input_text)
         txtOutputText = findViewById(R.id.txt_output_text)
         btnTranslate = findViewById(R.id.btn_translate)
-        btnAdd = findViewById(R.id.btn_add)
+        btnUpdate = findViewById(R.id.btn_update)
     }
 
     /**
@@ -96,19 +106,35 @@ class TranslateActivity : AppCompatActivity() {
             }
         }
 
-        btnAdd.setOnClickListener {
+        btnUpdate.setOnClickListener {
             // Go to Add Medicine Activity
-            val medicine = Medicine()
-            medicine.medicineName = txtOutputText.text.toString().trim()
-            medicine.medicineLangCode = languageTranslated
-            AddMedicineActivity.beginActivity(this, medicine)
+            mMedicine?.medicineName = txtOutputText.text.toString().trim()
+            mMedicine?.medicineLangCode = languageTranslated
+            val intent = intent
+            intent.putExtra(MEDICINE_OBJ, mMedicine)
+            setResult(Activity.RESULT_OK, intent)
+            finish()
         }
+    }
+
+    private fun setData() {
+        if (!TextUtils.isEmpty(mMedicine?.medicineName))
+            edtInputText.setText(mMedicine?.medicineName)
     }
 
     /**
      * Set Language adapter
      */
     private fun setAdapter() {
+
+        if (mMedicine?.medicineLangCode!!.equals(LangCode.KOREAN.code)) {
+            //Remove Vietnamese, as we don't have Korean - Vietnamese translator
+            languageList.removeAt(1)
+        } else if (mMedicine?.medicineLangCode!!.equals(LangCode.VIETNAMESE.code)) {
+            //Remove Vietnamese, as we don't have Vietnamese - Korean translator
+            languageList.removeAt(0)
+        }
+
         mAdapter = LanguageAdapter(this, languageList)
         spnLanguage.adapter = mAdapter
     }
@@ -168,11 +194,6 @@ class TranslateActivity : AppCompatActivity() {
                         .setTargetLanguage(FirebaseTranslateLanguage.EN)
                         .build()
 
-                } else{
-                    options = FirebaseTranslatorOptions.Builder()
-                        .setSourceLanguage(FirebaseTranslateLanguage.EN)
-                        .setTargetLanguage(FirebaseTranslateLanguage.EN)
-                        .build()
                 }
                 val translator = FirebaseNaturalLanguage.getInstance().getTranslator(options!!)
                 translator.translate(edtInputText.text.toString().trim())
@@ -270,6 +291,5 @@ class TranslateActivity : AppCompatActivity() {
                 Log.d("MainAcitivity", it.localizedMessage)
             }
     }
-
 
 }

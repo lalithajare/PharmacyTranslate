@@ -4,46 +4,53 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.provider.MediaStore
 import android.text.TextUtils
 import android.widget.Button
 import android.widget.EditText
-import android.widget.ImageView
-import androidx.appcompat.app.AlertDialog
-import com.translator.app.R
-import com.translator.app.models.User
-import com.translator.app.utils.FileManager
 import com.translator.app.utils.Prefs
 import com.translator.app.utils.Utils
-import androidx.core.content.FileProvider
+import android.provider.MediaStore
+import android.widget.ImageView
+import android.net.Uri
+import androidx.appcompat.app.AlertDialog
+import com.translator.app.R
+import com.translator.app.utils.FileManager
 
 
-class ProfileActivity : AppCompatActivity() {
+class EditProfileActivity : AppCompatActivity() {
+
+    private val TAG = EditProfileActivity::class.java.simpleName
 
     companion object {
-        fun beginActivity(activity: AppCompatActivity) {
-            activity.startActivity(Intent(activity, ProfileActivity::class.java))
+        val REQ_EDIT_PROFILE = 342
+        fun beginActivityForResult(activity: AppCompatActivity) {
+            activity.startActivityForResult(
+                Intent(activity, EditProfileActivity::class.java),
+                REQ_EDIT_PROFILE
+            )
         }
     }
+
+    private val REQ_IMAGE_PERMS = 788
 
     private lateinit var imgUser: ImageView
     private lateinit var edtName: EditText
     private lateinit var edtHeight: EditText
     private lateinit var edtWeight: EditText
     private lateinit var edtMedConds: EditText
-    private lateinit var btnSave: Button
-    private val REQ_IMAGE_PERMS = 788
-    private val user = User()
+    private lateinit var btnUpdate: Button
+
+    private val user = Prefs.user
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_profile)
+        setContentView(R.layout.activity_edit_profile)
         initViews()
         setViews()
+        setData()
     }
 
     private fun initViews() {
@@ -52,11 +59,11 @@ class ProfileActivity : AppCompatActivity() {
         edtHeight = findViewById(R.id.edt_height)
         edtWeight = findViewById(R.id.edt_weight)
         edtMedConds = findViewById(R.id.edt_med_conds)
-        btnSave = findViewById(R.id.btn_save)
+        btnUpdate = findViewById(R.id.btn_update)
     }
 
     private fun setViews() {
-        btnSave.setOnClickListener {
+        btnUpdate.setOnClickListener {
             if (validInput()) {
                 setValues()
                 Prefs.user = user
@@ -84,11 +91,47 @@ class ProfileActivity : AppCompatActivity() {
         }
     }
 
+    private fun showImageDialogue() {
+        val options = arrayOf<CharSequence>("Take Photo", "Choose From Gallery", "Cancel")
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Select Option")
+        builder.setItems(options) { dialog, item ->
+            if (options[item] == "Take Photo") {
+                getCameraImage()
+                dialog.dismiss()
+            } else if (options[item] == "Choose From Gallery") {
+                getGalleryImage()
+                dialog.dismiss()
+            } else if (options[item] == "Cancel") {
+                dialog.dismiss()
+            }
+        }
+        builder.show()
+    }
+
+
+    private fun setData() {
+        if (user != null) {
+            if (!user.image.isBlank()) {
+                val uri = Uri.parse(user.image)
+                imgUser.setImageURI(uri)
+            }
+            if (!TextUtils.isEmpty(user.name)) {
+                edtName.setText(user.name)
+            }
+            edtHeight.setText(user.height.toString())
+            edtWeight.setText(user.weight.toString())
+            if (!TextUtils.isEmpty(user.medicalConditions)) {
+                edtMedConds.setText(user.medicalConditions)
+            }
+        }
+    }
+
     private fun setValues() {
-        user.name = edtName.text.toString().trim()
-        user.height = edtHeight.text.toString().trim().toDouble()
-        user.weight = edtWeight.text.toString().trim().toDouble()
-        user.medicalConditions = edtMedConds.text.toString().trim()
+        user?.name = edtName.text.toString().trim()
+        user?.height = edtHeight.text.toString().trim().toDouble()
+        user?.weight = edtWeight.text.toString().trim().toDouble()
+        user?.medicalConditions = edtMedConds.text.toString().trim()
     }
 
     private fun validInput(): Boolean {
@@ -108,36 +151,10 @@ class ProfileActivity : AppCompatActivity() {
         return false
     }
 
-    private fun showImageDialogue() {
-        val options = arrayOf<CharSequence>("Take Photo", "Choose From Gallery", "Cancel")
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Select Option")
-        builder.setItems(options) { dialog, item ->
-            if (options[item] == "Take Photo") {
-                getCameraImage()
-                dialog.dismiss()
-            } else if (options[item] == "Choose From Gallery") {
-                getGalleryImage()
-                dialog.dismiss()
-            } else if (options[item] == "Cancel") {
-                dialog.dismiss()
-            }
-        }
-        builder.show()
-    }
-
     private fun getCameraImage() {
         val takePicture = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        val file = FileManager.getFile()
-        val photoURI = FileProvider.getUriForFile(
-            this,
-            applicationContext.packageName + ".fileprovider",
-            file
-        )
-        takePicture.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
-        takePicture.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        takePicture.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION)
         startActivityForResult(takePicture, 0)
-
     }
 
     private fun getGalleryImage() {
