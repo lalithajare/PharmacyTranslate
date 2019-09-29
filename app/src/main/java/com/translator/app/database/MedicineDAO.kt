@@ -10,15 +10,15 @@ import com.translator.app.models.Medicine
 interface MedicineDAO {
 
     @Insert
-    fun insertMedicine(medicine: Medicine): Long
+    suspend fun insertMedicine(medicine: Medicine): Long
 
     @Update
-    fun updateMedicine(medicine: Medicine): Int
+    suspend fun updateMedicine(medicine: Medicine): Int
 
     @Query("SELECT * FROM medicines")
-    fun getMedicines(): List<Medicine>
+    suspend fun getMedicineList(): List<Medicine>
 
     @Query("SELECT * FROM medicines WHERE medicine_id = :id")
-    fun getMedicine(id: Long): Medicine
+    suspend fun getMedicine(id: Long): Medicine
 
 }

@@ -19,4 +19,9 @@
     <string name="name_of_medicine">Name of Medicine</string>
     <string name="add_a_description">Add a Description</string>
     <string name="translated">Translated</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="korean">Korean</string>
+    <string name="vietnamese">Vietnamese</string>
+    <string name="english">English</string>
 </resources>

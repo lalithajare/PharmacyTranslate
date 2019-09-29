@@ -13,6 +13,7 @@ import com.translator.app.R
 import com.translator.app.adapters.MedicineAdapter
 import com.translator.app.models.Medicine
 import com.translator.app.utils.MyApplication
+import kotlinx.coroutines.*
 
 class MedicineListActivity : AppCompatActivity(), View.OnClickListener {
 
@@ -47,6 +48,7 @@ class MedicineListActivity : AppCompatActivity(), View.OnClickListener {
     private fun setAdapter() {
         mAdapter = MedicineAdapter(medicineList) { medicine ->
             Log.d(TAG, "Medicine clicked : ${medicine.medicineName}")
+            MedicineDetailsActivity.beginActivity(this, medicine)
         }
         rvMedicine.adapter = mAdapter
         rvMedicine.layoutManager = LinearLayoutManager(this)
@@ -56,7 +58,14 @@ class MedicineListActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun loadMedicinesFromDB() {
         //Get all medicines from database
-        medicineList.addAll(MyApplication.getPharmacyDB().medicineDao().getMedicines())
-        mAdapter.notifyDataSetChanged()
+        GlobalScope.launch(Dispatchers.Main) {
+            val list = MyApplication.getPharmacyDB().medicineDao().getMedicineList()
+            if (!list.isEmpty()) {
+                medicineList.addAll(list)
+                mAdapter.notifyDataSetChanged()
+            }
+        }
     }
+
+
 }

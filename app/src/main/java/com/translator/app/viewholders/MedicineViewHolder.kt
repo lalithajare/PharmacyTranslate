@@ -20,7 +20,10 @@ class MedicineViewHolder(var mView: View, var callBack: (Medicine) -> Unit) : Vi
             txtMedicineName.text = mMedicine?.medicineName
 
         if (mMedicine?.medicineLangCode !== TranslateActivity.LangCode.ENGLISH.code) {
+            txtTranslated.setText("${txtTranslated.text} (${mMedicine?.medicineLangCode})")
             txtTranslated.visibility = View.VISIBLE
+        } else {
+            txtTranslated.visibility = View.GONE
         }
 
         mView.setOnClickListener {

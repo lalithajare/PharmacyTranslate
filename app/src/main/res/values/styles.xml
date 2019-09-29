@@ -37,4 +37,10 @@
         <item name="android:layout_height">wrap_content</item>
     </style>
 
+    <style name="RadioButtonStyle" parent="@android:style/Widget.CompoundButton.RadioButton">
+        <item name="android:background">@drawable/rb_selector</item>
+        <item name="android:button">@null</item>
+        <item name="android:textColor">@color/txt_selector</item>
+    </style>
+
 </resources>

@@ -11,6 +11,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".screens.MedicineDetailsActivity"
+            android:label="Medicine Details" />
+        <activity
             android:name=".screens.MedicineListActivity"
             android:label="My Medicines" />
         <activity

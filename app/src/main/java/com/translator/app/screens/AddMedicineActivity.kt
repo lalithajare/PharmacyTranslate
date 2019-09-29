@@ -1,7 +1,6 @@
 package com.translator.app.screens
 
 import android.content.Intent
-import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -10,6 +9,7 @@ import android.widget.EditText
 import com.translator.app.R
 import com.translator.app.models.Medicine
 import com.translator.app.utils.MyApplication
+import kotlinx.coroutines.*
 
 class AddMedicineActivity : AppCompatActivity() {
 
@@ -60,22 +60,28 @@ class AddMedicineActivity : AppCompatActivity() {
                         " Medicine Language Code : ${medicine.medicineLangCode}"
             )
 
-            InsertTask(medicine, this).execute()
+
+            GlobalScope.launch(Dispatchers.Main) {
+                val rowId = MyApplication.getPharmacyDB().medicineDao().insertMedicine(medicine)
+                if (rowId != 0L) {
+                    MedicineListActivity.beginActivity(this@AddMedicineActivity)
+                }
+//                addMedicine(this)
+//                MedicineListActivity.beginActivity(this@AddMedicineActivity)
+
+            }
+//            addMedicine()
+//            MedicineListActivity.beginActivity(this@AddMedicineActivity)
         }
     }
 
-    private class InsertTask(
-        var medicine: Medicine,
-        var addMedicineActivity: AddMedicineActivity
-    ) : AsyncTask<Void, Void, Void?>() {
-        override fun doInBackground(vararg params: Void?): Void? {
-            MyApplication.getPharmacyDB().medicineDao().insertMedicine(medicine)
-            return null
-        }
+    /* private suspend fun addMedicine(coroutineScope: CoroutineScope): Job {
+         return CoroutineScope(coroutineScope.coroutineContext).launch {
+             val rowId = MyApplication.getPharmacyDB().medicineDao().insertMedicine(medicine)
+             if (rowId != 0L) {
+                 MedicineListActivity.beginActivity(this@AddMedicineActivity)
+             }
+         }
+     }*/
 
-        override fun onPostExecute(result: Void?) {
-            super.onPostExecute(result)
-            MedicineListActivity.beginActivity(addMedicineActivity)
-        }
-    }
 }
