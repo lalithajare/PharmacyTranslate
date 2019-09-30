@@ -1,6 +1,7 @@
 package com.translator.app.screens
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -55,11 +56,13 @@ class ProfileActivity : AppCompatActivity() {
         btnSave = findViewById(R.id.btn_save)
     }
 
+    @SuppressLint("NewApi")
     private fun setViews() {
         btnSave.setOnClickListener {
             if (validInput()) {
                 setValues()
                 Prefs.user = user
+                MainActivity.beginActivity(this)
                 setResult(Activity.RESULT_OK)
                 finish()
             }
