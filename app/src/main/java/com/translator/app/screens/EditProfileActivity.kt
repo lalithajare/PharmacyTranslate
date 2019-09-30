@@ -1,9 +1,12 @@
 package com.translator.app.screens
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -18,6 +21,9 @@ import android.net.Uri
 import androidx.appcompat.app.AlertDialog
 import com.translator.app.R
 import com.translator.app.utils.FileManager
+import com.translator.app.utils.FileUriManager
+import java.io.File
+import androidx.core.content.FileProvider
 
 
 class EditProfileActivity : AppCompatActivity() {
@@ -62,6 +68,7 @@ class EditProfileActivity : AppCompatActivity() {
         btnUpdate = findViewById(R.id.btn_update)
     }
 
+    @SuppressLint("NewApi")
     private fun setViews() {
         btnUpdate.setOnClickListener {
             if (validInput()) {
@@ -75,11 +82,13 @@ class EditProfileActivity : AppCompatActivity() {
             if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)) {
                 if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
                     || checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+                    || checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
                 ) {
                     requestPermissions(
                         arrayOf(
                             Manifest.permission.CAMERA,
-                            Manifest.permission.READ_EXTERNAL_STORAGE
+                            Manifest.permission.READ_EXTERNAL_STORAGE,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE
                         ), REQ_IMAGE_PERMS
                     )
                 } else {
@@ -151,8 +160,20 @@ class EditProfileActivity : AppCompatActivity() {
         return false
     }
 
+
+    fun getOutputUri(): Uri {
+        val photoFile = File(filesDir, "ProfilePIC.jpg")
+        val lProviderPath = FileProvider.getUriForFile(
+            this,
+            applicationContext.packageName + ".fileprovider",
+            photoFile
+        )
+        return lProviderPath
+    }
+
     private fun getCameraImage() {
         val takePicture = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        takePicture.putExtra(MediaStore.EXTRA_OUTPUT, getOutputUri())
         takePicture.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION)
         startActivityForResult(takePicture, 0)
     }
@@ -167,18 +188,29 @@ class EditProfileActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, imageReturnedIntent: Intent?) {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent)
+
+        val fileToWrite = FileManager.getProfilePicFile()
+        val uriManager = FileUriManager(this)
+
         when (requestCode) {
+            //CAMERA
             0 -> if (resultCode == Activity.RESULT_OK) {
-                val selectedImage = imageReturnedIntent!!.data
-                imgUser.setImageURI(selectedImage)
-                user?.image = selectedImage.toString()
+                val bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, getOutputUri())
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileToWrite.outputStream())
+                imgUser.setImageBitmap(bitmap)
+                user?.image = fileToWrite.absolutePath
             }
+            //GALLERY
             1 -> if (resultCode == Activity.RESULT_OK) {
                 val selectedImage = imageReturnedIntent!!.data
+                val realFilePath = uriManager.getUriRealPath(this, selectedImage)
                 imgUser.setImageURI(selectedImage)
-                user?.image = selectedImage.toString()
+                val fileToCopy = File(realFilePath)
+                fileToCopy.copyTo(fileToWrite, true)
+                user?.image = fileToCopy.absolutePath.toString()
             }
         }
+
     }
 
     override fun onRequestPermissionsResult(

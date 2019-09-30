@@ -5,7 +5,6 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -21,7 +20,7 @@ import com.translator.app.utils.FileManager
 import com.translator.app.utils.Prefs
 import com.translator.app.utils.Utils
 import androidx.core.content.FileProvider
-
+import java.io.File
 
 class ProfileActivity : AppCompatActivity() {
 
@@ -131,14 +130,14 @@ class ProfileActivity : AppCompatActivity() {
 
     private fun getCameraImage() {
         val takePicture = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        val file = FileManager.getFile()
+        val file = FileManager.getProfilePicFile()
         val photoURI = FileProvider.getUriForFile(
             this,
             applicationContext.packageName + ".fileprovider",
             file
         )
         takePicture.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
-        takePicture.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        takePicture.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         startActivityForResult(takePicture, 0)
 
     }
@@ -153,16 +152,23 @@ class ProfileActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, imageReturnedIntent: Intent?) {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent)
+
+        val fileToWrite = FileManager.getProfilePicFile()
+
         when (requestCode) {
+            //CAMERA
             0 -> if (resultCode == Activity.RESULT_OK) {
                 val selectedImage = imageReturnedIntent!!.data
                 imgUser.setImageURI(selectedImage)
-                user?.image = selectedImage.toString()
+                user.image = selectedImage.toString()
             }
+            //GALLERY
             1 -> if (resultCode == Activity.RESULT_OK) {
                 val selectedImage = imageReturnedIntent!!.data
                 imgUser.setImageURI(selectedImage)
-                user?.image = selectedImage.toString()
+                val fileToCopy = File(selectedImage.toString())
+                fileToCopy.copyTo(fileToWrite, true)
+                user.image = fileToCopy.absolutePath.toString()
             }
         }
     }

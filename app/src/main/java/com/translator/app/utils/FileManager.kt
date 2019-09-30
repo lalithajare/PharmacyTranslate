@@ -14,8 +14,21 @@ object FileManager {
         }
     }
 
-    fun getFile(): File {
-        return File(File(IMAGE_PATH), PROFILE_FILE_NAME)
+    fun getProfilePicFile(): File {
+        val file = File(File(IMAGE_PATH), PROFILE_FILE_NAME)
+        if (!file.exists()) {
+            file.createNewFile()
+        }
+        return file
+    }
+
+    fun deleteProfilePicFile(): Boolean {
+        val file = File(File(IMAGE_PATH), PROFILE_FILE_NAME)
+        if (file.exists()) {
+            file.delete()
+            return true
+        }
+        return false
     }
 
 }
