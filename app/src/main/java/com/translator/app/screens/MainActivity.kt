@@ -83,7 +83,7 @@ class MainActivity : AppCompatActivity() {
 
     /**
      * This is a callback function to check the result from further opened activity,i.e, Edit Profile Activity
-     * If the result is 
+     * If the result is
      */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
