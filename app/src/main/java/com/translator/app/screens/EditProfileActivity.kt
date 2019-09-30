@@ -7,22 +7,32 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.MediaStore
 import android.text.TextUtils
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
-import android.provider.MediaStore
 import android.widget.ImageView
-import android.net.Uri
+import android.widget.ProgressBar
 import androidx.appcompat.app.AlertDialog
-import com.translator.app.R
-import java.io.File
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
-import com.bumptech.glide.Glide
-import com.translator.app.utils.*
-import kotlinx.coroutines.*
+import com.squareup.picasso.MemoryPolicy
+import com.squareup.picasso.NetworkPolicy
+import com.squareup.picasso.Picasso
+import com.translator.app.R
+import com.translator.app.utils.CircleTransform
+import com.translator.app.utils.FileManager
+import com.translator.app.utils.Prefs
+import com.translator.app.utils.Utils
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
 
 
 class EditProfileActivity : AppCompatActivity() {
@@ -47,6 +57,7 @@ class EditProfileActivity : AppCompatActivity() {
     private lateinit var edtWeight: EditText
     private lateinit var edtMedConds: EditText
     private lateinit var btnUpdate: Button
+    private lateinit var pgBar: ProgressBar
 
     private val user = Prefs.user
 
@@ -65,22 +76,31 @@ class EditProfileActivity : AppCompatActivity() {
         edtWeight = findViewById(R.id.edt_weight)
         edtMedConds = findViewById(R.id.edt_med_conds)
         btnUpdate = findViewById(R.id.btn_update)
+        pgBar = findViewById(R.id.pg_bar)
+    }
+
+    private fun saveData() {
+        setValues()
+        Prefs.user = user
+        if (cameraImageUri != null)
+            saveImageInDir(cameraImageUri!!, FileManager.getProfilePicFile())
+        else
+            saveImageInDir(galleryImageUri!!, FileManager.getProfilePicFile())
     }
 
     @SuppressLint("NewApi")
     private fun setViews() {
         btnUpdate.setOnClickListener {
             if (validInput()) {
-                GlobalScope.launch(Dispatchers.IO) {
-                    setValues()
-                    Prefs.user = user
-                    if (cameraImageUri != null)
-                        saveImageInDir(cameraImageUri!!, FileManager.getProfilePicFile())
-                    else
-                        saveImageInDir(galleryImageUri!!, FileManager.getProfilePicFile())
+                GlobalScope.launch(Dispatchers.Main) {
+                    pgBar.visibility = View.VISIBLE
+                    withContext(Dispatchers.Default) {
+                        saveData()
+                    }
+                    pgBar.visibility = View.GONE
+                    setResult(Activity.RESULT_OK)
+                    finish()
                 }
-                setResult(Activity.RESULT_OK)
-                finish()
             }
         }
         imgUser.setOnClickListener {
@@ -127,17 +147,11 @@ class EditProfileActivity : AppCompatActivity() {
     private fun setData() {
         if (user != null) {
             if (FileManager.getProfilePicFile().exists()) {
-
-                Glide.with(this)
-                    .load(FileManager.getProfilePicFile())
-                    .into(imgUser)
-
-                /*Picasso.get().load(FileManager.getProfilePicFile())
+                Picasso.get().load(FileManager.getProfilePicFile())
                     .networkPolicy(NetworkPolicy.NO_CACHE)
                     .memoryPolicy(MemoryPolicy.NO_CACHE)
                     .transform(CircleTransform())
                     .into(imgUser)
-*/
             }
             if (!TextUtils.isEmpty(user.name)) {
                 edtName.setText(user.name)
@@ -207,24 +221,22 @@ class EditProfileActivity : AppCompatActivity() {
         when (requestCode) {
             //CAMERA
             0 -> if (resultCode == Activity.RESULT_OK) {
-               /* Picasso.get().load(getOutputUri())
+                Picasso.get().load(getOutputUri())
                     .transform(CircleTransform())
+                    .networkPolicy(NetworkPolicy.NO_CACHE)
+                    .memoryPolicy(MemoryPolicy.NO_CACHE)
                     .rotate(90f)
-                    .into(imgUser)*/
-                Glide.with(this)
-                    .load(getOutputUri())
                     .into(imgUser)
                 cameraImageUri = getOutputUri()
                 galleryImageUri = null
             }
             //GALLERY
             1 -> if (resultCode == Activity.RESULT_OK) {
-             /*   Picasso.get().load(imageReturnedIntent!!.data)
+                Picasso.get().load(imageReturnedIntent!!.data)
                     .transform(CircleTransform())
+                    .networkPolicy(NetworkPolicy.NO_CACHE)
+                    .memoryPolicy(MemoryPolicy.NO_CACHE)
                     .rotate(-90f)
-                    .into(imgUser)*/
-                Glide.with(this)
-                    .load(imageReturnedIntent!!.data)
                     .into(imgUser)
                 galleryImageUri = imageReturnedIntent.data
                 cameraImageUri = null
