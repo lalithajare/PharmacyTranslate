@@ -3,27 +3,26 @@ package com.translator.app.screens
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.TextUtils
 import android.widget.Button
 import android.widget.EditText
-import com.translator.app.utils.Prefs
-import com.translator.app.utils.Utils
 import android.provider.MediaStore
 import android.widget.ImageView
 import android.net.Uri
 import androidx.appcompat.app.AlertDialog
 import com.translator.app.R
-import com.translator.app.utils.FileManager
-import com.translator.app.utils.FileUriManager
 import java.io.File
 import androidx.core.content.FileProvider
+import com.bumptech.glide.Glide
+import com.translator.app.utils.*
+import kotlinx.coroutines.*
 
 
 class EditProfileActivity : AppCompatActivity() {
@@ -72,8 +71,14 @@ class EditProfileActivity : AppCompatActivity() {
     private fun setViews() {
         btnUpdate.setOnClickListener {
             if (validInput()) {
-                setValues()
-                Prefs.user = user
+                GlobalScope.launch(Dispatchers.IO) {
+                    setValues()
+                    Prefs.user = user
+                    if (cameraImageUri != null)
+                        saveImageInDir(cameraImageUri!!, FileManager.getProfilePicFile())
+                    else
+                        saveImageInDir(galleryImageUri!!, FileManager.getProfilePicFile())
+                }
                 setResult(Activity.RESULT_OK)
                 finish()
             }
@@ -121,9 +126,18 @@ class EditProfileActivity : AppCompatActivity() {
 
     private fun setData() {
         if (user != null) {
-            if (!user.image.isBlank()) {
-                val uri = Uri.parse(user.image)
-                imgUser.setImageURI(uri)
+            if (FileManager.getProfilePicFile().exists()) {
+
+                Glide.with(this)
+                    .load(FileManager.getProfilePicFile())
+                    .into(imgUser)
+
+                /*Picasso.get().load(FileManager.getProfilePicFile())
+                    .networkPolicy(NetworkPolicy.NO_CACHE)
+                    .memoryPolicy(MemoryPolicy.NO_CACHE)
+                    .transform(CircleTransform())
+                    .into(imgUser)
+*/
             }
             if (!TextUtils.isEmpty(user.name)) {
                 edtName.setText(user.name)
@@ -161,14 +175,13 @@ class EditProfileActivity : AppCompatActivity() {
     }
 
 
-    fun getOutputUri(): Uri {
+    private fun getOutputUri(): Uri {
         val photoFile = File(filesDir, "ProfilePIC.jpg")
-        val lProviderPath = FileProvider.getUriForFile(
+        return FileProvider.getUriForFile(
             this,
             applicationContext.packageName + ".fileprovider",
             photoFile
         )
-        return lProviderPath
     }
 
     private fun getCameraImage() {
@@ -186,32 +199,59 @@ class EditProfileActivity : AppCompatActivity() {
         startActivityForResult(pickPhoto, 1)
     }
 
+    private var cameraImageUri: Uri? = null
+    private var galleryImageUri: Uri? = null
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, imageReturnedIntent: Intent?) {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent)
-
-        val fileToWrite = FileManager.getProfilePicFile()
-        val uriManager = FileUriManager(this)
-
         when (requestCode) {
             //CAMERA
             0 -> if (resultCode == Activity.RESULT_OK) {
-                val bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, getOutputUri())
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileToWrite.outputStream())
-                imgUser.setImageBitmap(bitmap)
-                user?.image = fileToWrite.absolutePath
+               /* Picasso.get().load(getOutputUri())
+                    .transform(CircleTransform())
+                    .rotate(90f)
+                    .into(imgUser)*/
+                Glide.with(this)
+                    .load(getOutputUri())
+                    .into(imgUser)
+                cameraImageUri = getOutputUri()
+                galleryImageUri = null
             }
             //GALLERY
             1 -> if (resultCode == Activity.RESULT_OK) {
-                val selectedImage = imageReturnedIntent!!.data
-                val realFilePath = uriManager.getUriRealPath(this, selectedImage)
-                imgUser.setImageURI(selectedImage)
-                val fileToCopy = File(realFilePath)
-                fileToCopy.copyTo(fileToWrite, true)
-                user?.image = fileToCopy.absolutePath.toString()
+             /*   Picasso.get().load(imageReturnedIntent!!.data)
+                    .transform(CircleTransform())
+                    .rotate(-90f)
+                    .into(imgUser)*/
+                Glide.with(this)
+                    .load(imageReturnedIntent!!.data)
+                    .into(imgUser)
+                galleryImageUri = imageReturnedIntent.data
+                cameraImageUri = null
             }
         }
-
     }
+
+    private fun saveImageInDir(inputUri: Uri, fileToWrite: File) {
+        val bitmap = BitmapFactory.decodeStream(
+            contentResolver.openInputStream(inputUri)
+        )
+        bitmap.compress(Bitmap.CompressFormat.PNG, 50, fileToWrite.outputStream())
+
+        /* val newBitmap = ImageRotationHandler.handleSamplingAndRotationBitmap(
+             applicationContext,
+             Uri.fromFile(FileManager.getProfilePicFile())
+         )
+
+         newBitmap.compress(Bitmap.CompressFormat.PNG, 100, fileToWrite.outputStream())*/
+    }
+
+    /* private fun saveImageToAppFolder(fileToWrite: File) {
+         val bitmap = BitmapFactory.decodeStream(
+             contentResolver.openInputStream(getOutputUri())
+         )
+         bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileToWrite.outputStream())
+     }*/
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
