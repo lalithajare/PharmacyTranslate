@@ -225,7 +225,6 @@ class EditProfileActivity : AppCompatActivity() {
                     .transform(CircleTransform())
                     .networkPolicy(NetworkPolicy.NO_CACHE)
                     .memoryPolicy(MemoryPolicy.NO_CACHE)
-                    .rotate(90f)
                     .into(imgUser)
                 cameraImageUri = getOutputUri()
                 galleryImageUri = null
@@ -236,7 +235,6 @@ class EditProfileActivity : AppCompatActivity() {
                     .transform(CircleTransform())
                     .networkPolicy(NetworkPolicy.NO_CACHE)
                     .memoryPolicy(MemoryPolicy.NO_CACHE)
-                    .rotate(-90f)
                     .into(imgUser)
                 galleryImageUri = imageReturnedIntent.data
                 cameraImageUri = null

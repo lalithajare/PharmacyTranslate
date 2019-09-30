@@ -14,6 +14,13 @@ import com.translator.app.R
 import com.translator.app.utils.CircleTransform
 import com.translator.app.utils.FileManager
 
+/**
+ * This Activity is Landing screen for User.
+ * This screen consists of three section :
+ *  1. User Profile Flow
+ *  2. Translate / Add Medicine Flow
+ *  3. Medicine List / Edit Medicine flow
+ */
 class MainActivity : AppCompatActivity() {
 
     companion object {
@@ -35,6 +42,9 @@ class MainActivity : AppCompatActivity() {
         loadUserImage()
     }
 
+    /**
+     * This function initializes all the views in screen
+     */
     private fun initViews() {
         linTranslate = findViewById(R.id.lin_translate)
         linMyMedicines = findViewById(R.id.lin_my_medicines)
@@ -43,6 +53,9 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    /**
+     * This function set the listeners to all the views in screen.
+     */
     private fun setViews() {
         linTranslate.setOnClickListener {
             TranslateActivity.beginActivity(this)
@@ -56,6 +69,9 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    /**
+     * It loads the image from App's directory to ImageView
+     */
     private fun loadUserImage() {
         //Load image from memory
         Picasso.get().load(FileManager.getProfilePicFile())
@@ -65,6 +81,10 @@ class MainActivity : AppCompatActivity() {
             .into(imgUser)
     }
 
+    /**
+     * This is a callback function to check the result from further opened activity,i.e, Edit Profile Activity
+     * If the result is 
+     */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == EditProfileActivity.REQ_EDIT_PROFILE && resultCode == Activity.RESULT_OK) {

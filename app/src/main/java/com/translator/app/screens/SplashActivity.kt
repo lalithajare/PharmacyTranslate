@@ -6,6 +6,11 @@ import android.os.Handler
 import com.translator.app.R
 import com.translator.app.utils.Prefs
 
+/**
+ * This is launcher Activity.
+ * It will be displayed for 3 sec.
+ * After that the ProfileActivity will be opened, if the User is not enter previously, or MainActivity.
+ */
 class SplashActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
