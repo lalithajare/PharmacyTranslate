@@ -8,6 +8,11 @@ import android.graphics.Shader;
 
 import com.squareup.picasso.Transformation;
 
+/**
+ * 1. This class is used to assist 'Picasso' to make the shape of image loaded to be round.
+ * 2. 'Picass' os the library used to load and set the images to 'ImageViews'.
+ * 3. It actually draws image on 'Canvas' of Android
+ */
 public class CircleTransform implements Transformation {
     @Override
     public Bitmap transform(Bitmap source) {
