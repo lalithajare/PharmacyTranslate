@@ -12,21 +12,46 @@ import com.translator.app.database.PharmacyDatabase
  */
 class MyApplication : Application() {
 
+    /**
+     * The instance of SharedPreferences that is used by 'Prefs' class.
+     */
     lateinit var mSharedPreferences: SharedPreferences
 
     companion object {
+
+        /**
+         * The singleton instance of 'MyApplication' used for getting Application context and access universal objects like Database, Preferences, etc.
+         */
         private lateinit var instance: MyApplication
+
+        /**
+         * The Instance of 'PharmacyDatabase' used for doing Database operations.
+         */
         private lateinit var pharmaDB: PharmacyDatabase
 
+        /**
+         * Method to acquire 'MyApplication' instance.
+         *
+         * @return
+         */
         fun getApplicationInstance(): MyApplication {
             return instance
         }
 
+        /**
+         * Method to acquire 'PharmacyDatabase' instance.
+         *
+         * @return
+         */
         fun getPharmacyDB(): PharmacyDatabase {
             return pharmaDB
         }
     }
 
+    /**
+     * Entry point to this Activity
+     *
+     */
     override fun onCreate() {
         super.onCreate()
         instance = this

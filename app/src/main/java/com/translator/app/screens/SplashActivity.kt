@@ -13,6 +13,11 @@ import com.translator.app.utils.Prefs
  */
 class SplashActivity : AppCompatActivity() {
 
+    /**
+     * Entry point to this activity
+     *
+     * @param savedInstanceState
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)

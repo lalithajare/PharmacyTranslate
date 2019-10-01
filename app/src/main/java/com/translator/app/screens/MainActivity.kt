@@ -24,6 +24,12 @@ import com.translator.app.utils.FileManager
 class MainActivity : AppCompatActivity() {
 
     companion object {
+
+        /**
+         * This function opens up this Activity.
+         *
+         * @param activity : The invoking Activity.
+         */
         fun beginActivity(activity: AppCompatActivity) {
             activity.startActivity(Intent(activity, MainActivity::class.java))
         }

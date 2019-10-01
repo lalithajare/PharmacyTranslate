@@ -22,6 +22,13 @@ class MedicineAdapter(
     private var callBack: (Medicine) -> Unit
 ) : RecyclerView.Adapter<ViewHolder>() {
 
+    /**
+     * The callback function to initialize the ViewHolder for RecyclerView.
+     *
+     * @param parent : parent view of the passed view if any.
+     * @param p1 : Integer to manage different types of Views in RecyclerView.
+     * @return
+     */
     override fun onCreateViewHolder(parent: ViewGroup, p1: Int): ViewHolder {
         return MedicineViewHolder(
             LayoutInflater.from(parent.context)
@@ -30,10 +37,21 @@ class MedicineAdapter(
         )
     }
 
+    /**
+     * The callback function to set the model to initialized ViewHolder
+     *
+     * @param holder
+     * @param pos
+     */
     override fun onBindViewHolder(holder: ViewHolder, pos: Int) {
         holder.onBindView(medicineList[pos])
     }
 
+    /**
+     * Number of items in List
+     *
+     * @return
+     */
     override fun getItemCount(): Int {
         return medicineList.size
     }

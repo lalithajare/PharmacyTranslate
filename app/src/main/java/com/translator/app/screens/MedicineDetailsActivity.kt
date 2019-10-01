@@ -25,15 +25,35 @@ import kotlinx.coroutines.launch
 class MedicineDetailsActivity : AppCompatActivity() {
 
     companion object {
-        val MEDICINE_ID = "medicine_id"
-        val REQ_MED_DETAILS = 4243
 
+        /**
+         * The key for 'Medicine' Object
+         */
+        const val MEDICINE_ID = "medicine_id"
+
+        /**
+         * The request value ehile opening 'MedicineDetailsActivity'
+         */
+        private const val REQ_MED_DETAILS = 4243
+
+        /**
+         * This function opens up this Activity.
+         *
+         * @param activity : The invoking Activity.
+         * @param medicineId : The ID of 'Medicine' that is to be retrieved from Local database.
+         */
         fun beginActivity(activity: AppCompatActivity, medicineId: String) {
             val intent = Intent(activity, MedicineDetailsActivity::class.java)
             intent.putExtra(MEDICINE_ID, medicineId)
             activity.startActivity(intent)
         }
 
+        /**
+         * This function opens up this Activity expecting some result from this Activity.
+         *
+         * @param activity : The invoking Activity.
+         * @param medicineId : The ID of 'Medicine' that is to be retrieved from Local database.
+         */
         fun beginActivityForResult(activity: AppCompatActivity, medicineId: Long) {
             val intent = Intent(activity, MedicineDetailsActivity::class.java)
             intent.putExtra(MEDICINE_ID, medicineId)

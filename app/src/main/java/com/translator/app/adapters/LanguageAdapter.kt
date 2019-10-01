@@ -16,24 +16,58 @@ import com.translator.app.models.Language
  * @property list : The actual model list of 'Language' that are predetermined 'English,Korean,Vietnamese'.
  */
 class LanguageAdapter(var mContext: Context, var list: List<Language>) : BaseAdapter() {
+
+    /**
+     * Function to get Item by position
+     *
+     * @param p0 : Position of Item in list
+     * @return
+     */
     override fun getItem(p0: Int): Any {
         return list[p0]
     }
 
+    /**
+     * Fucntion to get Item's Id.
+     *
+     * @param p0 : ID of item that is generated internally
+     * @return
+     */
     override fun getItemId(p0: Int): Long {
         return p0.toLong()
     }
 
+    /**
+     * The count of items in list.
+     *
+     * @return
+     */
     override fun getCount(): Int {
         return list.size
     }
 
+    /**
+     * This function returns the initialized view.
+     *
+     * @param position : position of item in list
+     * @param convertView : The view for recycling purpose
+     * @param parent : The parent of View if any.
+     * @return
+     */
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val textView = View.inflate(mContext, R.layout.simple_list_item_1, null) as TextView
         textView.text = list[position].language
         return textView
     }
 
+    /**
+     * The view taht is shown when Spinner is expanded.
+     *
+     * @param position : position of item in list
+     * @param convertView : The view for recycling purpose
+     * @param parent : The parent of View if any.
+     * @return
+     */
     override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
         val textView = View.inflate(mContext, R.layout.simple_list_item_1, null) as TextView
         textView.text = list[position].language

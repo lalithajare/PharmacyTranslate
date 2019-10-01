@@ -22,8 +22,18 @@ class AddMedicineActivity : AppCompatActivity() {
     private val TAG = AddMedicineActivity::class.java.simpleName
 
     companion object {
-        val MEDICINE_OBJ = "medicine_obj"
 
+        /**
+         * Constant for Key value of 'Medicine' object
+         */
+        const val MEDICINE_OBJ = "medicine_obj"
+
+        /**
+         * This function opens up this Activity.
+         *
+         * @param activity : The invoking Activity.
+         * @param medicine : The value passed in 'Intent', while opening this Activity.
+         */
         fun beginActivity(activity: AppCompatActivity, medicine: Medicine) {
             val intent = Intent(activity, AddMedicineActivity::class.java)
             intent.putExtra(MEDICINE_OBJ, medicine)

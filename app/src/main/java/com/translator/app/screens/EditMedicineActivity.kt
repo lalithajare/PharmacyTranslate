@@ -27,15 +27,35 @@ class EditMedicineActivity : AppCompatActivity() {
     private val TAG = EditMedicineActivity::class.java.simpleName
 
     companion object {
-        val MEDICINE_OBJ = "medicine_obj"
-        val REQ_EDIT_MED = 82
 
+        /**
+         * The key for 'Medicine' object
+         */
+        const val MEDICINE_OBJ = "medicine_obj"
+
+        /**
+         * The request value while opening 'EditMedicineActivity'
+         */
+        private const val REQ_EDIT_MED = 82
+
+        /**
+         * This function opens up this Activity.
+         *
+         * @param activity : The invoking Activity.
+         * @param medicine : The value passed in 'Intent', while opening this Activity.
+         */
         fun beginActivity(activity: AppCompatActivity, medicine: Medicine) {
             val intent = Intent(activity, EditMedicineActivity::class.java)
             intent.putExtra(MEDICINE_OBJ, medicine)
             activity.startActivity(intent)
         }
 
+        /**
+         * This function opens up this Activity and expects some result_code.
+         *
+         * @param activity : The invoking Activity.
+         * @param medicine : The value passed in 'Intent', while opening this Activity.
+         */
         fun beginActivityForResult(activity: AppCompatActivity, medicine: Medicine) {
             val intent = Intent(activity, EditMedicineActivity::class.java)
             intent.putExtra(MEDICINE_OBJ, medicine)

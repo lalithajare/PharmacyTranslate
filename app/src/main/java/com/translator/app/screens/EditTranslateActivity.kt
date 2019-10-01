@@ -33,9 +33,22 @@ import com.translator.app.models.Medicine
 class EditTranslateActivity : AppCompatActivity() {
 
     companion object {
-        val REQ_TRANSLATE = 78
-        val MEDICINE_OBJ = "medicine_obj"
 
+        /**
+         * value for request while opening 'EditTranslateActivity'
+         */
+        const val REQ_TRANSLATE = 78
+
+        /**
+         * value for key of 'Medicine' object
+         */
+        const val MEDICINE_OBJ = "medicine_obj"
+
+        /**
+         * This function opens up this Activity.
+         *
+         * @param activity : The invoking Activity.
+         */
         fun beginActivityForResult(activity: AppCompatActivity, medicine: Medicine) {
             val intent = Intent(activity, EditTranslateActivity::class.java)
             intent.putExtra(MEDICINE_OBJ, medicine)
@@ -43,10 +56,29 @@ class EditTranslateActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * This enum consists of Language codes
+     * @param code : The ISO code of Language
+     */
     enum class LangCode(var code: String) {
-        KOREAN("ko"), VIETNAMESE("vi"), ENGLISH("en")
+        /**
+         * Enum instance for Korean code
+         */
+        KOREAN("ko"),
+        /**
+         * Enum instance for Vietnamese code
+         */
+        VIETNAMESE("vi"),
+        /**
+         * Enum instance for English code
+         */
+        ENGLISH("en")
     }
 
+
+    /**
+     * This List consists of 'Predetermined' set of Languages
+     */
     private val languageList = arrayListOf<Language>(
         Language(
             LangCode.KOREAN.code,
@@ -75,6 +107,9 @@ class EditTranslateActivity : AppCompatActivity() {
     private var isVietnameseAvailable = false
     private var isKoreanAvailable = false
 
+    /**
+     * This variable keeps the of exactly which language the text is translated to.
+     */
     private var languageTranslated = ""
 
     private var mMedicine: Medicine? = null
@@ -231,7 +266,7 @@ class EditTranslateActivity : AppCompatActivity() {
 
     /**
      * Check if device consists of language models
-     *  if not then download them
+     *  if not then download them.
      */
     private fun checkFirebaseLangModels() {
         val modelManager = FirebaseTranslateModelManager.getInstance()
@@ -272,7 +307,7 @@ class EditTranslateActivity : AppCompatActivity() {
     }
 
     /**
-     * Download the Korean language model
+     * Download the Korean language model.
      */
     private fun downloadKoreanModel(modelManager: FirebaseTranslateModelManager) {
         val model = FirebaseTranslateRemoteModel.Builder(FirebaseTranslateLanguage.KO)
@@ -292,7 +327,7 @@ class EditTranslateActivity : AppCompatActivity() {
     }
 
     /**
-     * Download the Vietnamese language model
+     * Download the Vietnamese language model.
      */
     private fun downloadVietNameseModel(modelManager: FirebaseTranslateModelManager) {
         val model = FirebaseTranslateRemoteModel.Builder(FirebaseTranslateLanguage.VI)

@@ -48,7 +48,9 @@ class ProfileActivity : AppCompatActivity() {
     companion object {
 
         /**
-         * This function opens up the activity
+         * This function opens up this Activity.
+         *
+         * @param activity : The invoking Activity.
          */
         fun beginActivity(activity: AppCompatActivity) {
             activity.startActivity(Intent(activity, ProfileActivity::class.java))
@@ -66,8 +68,17 @@ class ProfileActivity : AppCompatActivity() {
     private var cameraImageUri: Uri? = null
     private var galleryImageUri: Uri? = null
     private val REQ_IMAGE_PERMS = 788
+
+    /**
+     * The 'User' instance that is to be saved in 'SharedPreferences' after entering the data and setting the data to this instance.
+     */
     private val user = User()
 
+    /**
+     * Entry point to this Activity
+     *
+     * @param savedInstanceState
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)

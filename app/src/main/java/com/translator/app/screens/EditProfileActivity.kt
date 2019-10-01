@@ -46,7 +46,17 @@ class EditProfileActivity : AppCompatActivity() {
     private val TAG = EditProfileActivity::class.java.simpleName
 
     companion object {
-        val REQ_EDIT_PROFILE = 342
+
+        /**
+         * The value for request while opening 'EditProfileActivity'
+         */
+        const val REQ_EDIT_PROFILE = 342
+
+        /**
+         * This function opens up this Activity.
+         *
+         * @param activity : The invoking Activity.
+         */
         fun beginActivityForResult(activity: AppCompatActivity) {
             activity.startActivityForResult(
                 Intent(activity, EditProfileActivity::class.java),
@@ -301,22 +311,12 @@ class EditProfileActivity : AppCompatActivity() {
             contentResolver.openInputStream(inputUri)
         )
         bitmap.compress(Bitmap.CompressFormat.PNG, 50, fileToWrite.outputStream())
-
-        /* val newBitmap = ImageRotationHandler.handleSamplingAndRotationBitmap(
-             applicationContext,
-             Uri.fromFile(FileManager.getProfilePicFile())
-         )
-
-         newBitmap.compress(Bitmap.CompressFormat.PNG, 100, fileToWrite.outputStream())*/
     }
 
-    /* private fun saveImageToAppFolder(fileToWrite: File) {
-         val bitmap = BitmapFactory.decodeStream(
-             contentResolver.openInputStream(getOutputUri())
-         )
-         bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileToWrite.outputStream())
-     }*/
 
+    /**
+     * This fucntion is a callback for Permissions approved/declined by User for 'Camera' and 'External Content'
+     */
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,

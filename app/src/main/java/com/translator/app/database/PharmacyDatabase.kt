@@ -14,11 +14,27 @@ import com.translator.app.models.Medicine
  */
 @Database(entities = [Medicine::class], version = 1, exportSchema = false)
 abstract class PharmacyDatabase : RoomDatabase() {
+
+    /**
+     * Reference to MedicineDAO for Database operations.
+     * It is initialzed by 'Room Database Library'
+     * @return
+     */
     abstract fun medicineDao(): MedicineDAO
 
     companion object {
+
+        /**
+         * Instance of  'PharmacyDatabase' that managed as singleton throughout the App.
+         */
         private var INSTANCE: PharmacyDatabase? = null
 
+        /**
+         * TODOThe function to get 'Singleton' instance of 'PharmacyDatabase'
+         *
+         * @param context
+         * @return
+         */
         fun getDatabase(context: Context): PharmacyDatabase? {
             if (INSTANCE == null) {
                 synchronized(PharmacyDatabase::class) {

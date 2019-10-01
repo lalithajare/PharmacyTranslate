@@ -30,6 +30,12 @@ class MedicineListActivity : AppCompatActivity() {
 
 
     companion object {
+
+        /**
+         * This function opens up this Activity.
+         *
+         * @param activity : The invoking Activity.
+         */
         fun beginActivity(activity: AppCompatActivity) {
             activity.startActivity(Intent(activity, MedicineListActivity::class.java))
         }

@@ -11,8 +11,15 @@ import java.io.File
  */
 object FileManager {
 
-    val IMAGE_PATH = "${Environment.getExternalStorageDirectory()}/Pharma_Translator/Images"
-    val PROFILE_FILE_NAME = "Profile.jpg"
+    /**
+     * The path to the image directory in App's directory
+     */
+    private val IMAGE_PATH = "${Environment.getExternalStorageDirectory()}/Pharma_Translator/Images"
+
+    /**
+     * The name of Profile Image File.
+     */
+    private const val PROFILE_FILE_NAME = "Profile.jpg"
 
     /**
      * This function initially creates the directory structure.

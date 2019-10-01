@@ -32,6 +32,11 @@ import com.translator.app.models.Medicine
 class TranslateActivity : AppCompatActivity() {
 
     companion object {
+        /**
+         * This function opens up this Activity.
+         *
+         * @param activity : The invoking Activity.
+         */
         fun beginActivity(activity: AppCompatActivity) {
             activity.startActivity(Intent(activity, TranslateActivity::class.java))
         }
@@ -39,9 +44,21 @@ class TranslateActivity : AppCompatActivity() {
 
     /**
      * This enum consists of Language codes
+     * @param code : The ISO code of Language
      */
     enum class LangCode(var code: String) {
-        KOREAN("ko"), VIETNAMESE("vi"), ENGLISH("en")
+        /**
+         * Enum instance for Korean code
+         */
+        KOREAN("ko"),
+        /**
+         * Enum instance for Vietnamese code
+         */
+        VIETNAMESE("vi"),
+        /**
+         * Enum instance for English code
+         */
+        ENGLISH("en")
     }
 
     /**
@@ -80,6 +97,11 @@ class TranslateActivity : AppCompatActivity() {
      */
     private var languageTranslated = ""
 
+    /**
+     * Entry point to this Activity
+     *
+     * @param savedInstanceState
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_translate)
@@ -188,7 +210,7 @@ class TranslateActivity : AppCompatActivity() {
                         .setTargetLanguage(FirebaseTranslateLanguage.EN)
                         .build()
 
-                } else{
+                } else {
                     options = FirebaseTranslatorOptions.Builder()
                         .setSourceLanguage(FirebaseTranslateLanguage.EN)
                         .setTargetLanguage(FirebaseTranslateLanguage.EN)
