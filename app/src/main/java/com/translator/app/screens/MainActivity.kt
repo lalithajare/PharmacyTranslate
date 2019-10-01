@@ -89,7 +89,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * This is a callback function to check the result from further opened activity,i.e, Edit Profile Activity
+     * This is a callback function to check the result from further opened activity,i.e, 'EditProfileActivity'
      * If the result is 'RESULT_OK' only then the function is called.
      */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

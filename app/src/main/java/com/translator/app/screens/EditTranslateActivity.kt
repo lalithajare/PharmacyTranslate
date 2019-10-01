@@ -79,6 +79,11 @@ class EditTranslateActivity : AppCompatActivity() {
 
     private var mMedicine: Medicine? = null
 
+    /**
+     * This is the entry point to Activity
+     *
+     * @param savedInstanceState
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_translate)

@@ -16,6 +16,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
+/**
+ * 1. This Activity opens up after the 'item' in 'MedicineListActivity' is clicked
+ * 2. The purpose of this class is to show detailed information about the medicine.
+ * 3. 'Medicine Id' from 'item' in 'MedicineListActivity' is passed to this Activity.
+ * 4. This class then fetches the 'Medicine' data from Local Database, Kotlin-Coroutine is used for this purpose.
+ */
 class MedicineDetailsActivity : AppCompatActivity() {
 
     companion object {
@@ -42,8 +48,17 @@ class MedicineDetailsActivity : AppCompatActivity() {
     private lateinit var btnEdit: Button
     private lateinit var btnDelete: Button
 
+    /**
+     * This is the variable, whose value is passed from 'MedicineListActivity'
+     * On the basis of this variable, the Medicine details from Lcoal database is fetched.
+     */
     private var medicineId = 0L
 
+    /**
+     * This is the entry point to Activity
+     *
+     * @param savedInstanceState
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_medicine_details)
@@ -52,11 +67,21 @@ class MedicineDetailsActivity : AppCompatActivity() {
         setViews()
     }
 
+    /**
+     * This function is called when User revisits the Activity without Activity been killed.
+     * All details are fetched again whenever this function calls
+     */
     override fun onResume() {
         super.onResume()
         getMedicineDetails(medicineId)
     }
 
+    /**
+     * This function get the medicine details from Local DB.
+     * Coroutine is used while fetching data from local DB.
+     * @param medicineId
+     *  : The value by which correct medicine details are fetched.
+     */
     private fun getMedicineDetails(medicineId: Long) {
         GlobalScope.launch(Dispatchers.Main) {
             mMedicine = MyApplication.getPharmacyDB().medicineDao().getMedicine(medicineId)
@@ -66,6 +91,9 @@ class MedicineDetailsActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * This function initializes all the views in screen
+     */
     private fun initViews() {
         rgLangTabs = findViewById(R.id.rg_lang_tabs)
         txtMedicineName = findViewById(R.id.txt_medicine_name)
@@ -74,6 +102,10 @@ class MedicineDetailsActivity : AppCompatActivity() {
         btnDelete = findViewById(R.id.btn_delete)
     }
 
+    /**
+     * This function set the listeners to all the views in screen.
+     * It determines next steps when a particular view is clicked.
+     */
     private fun setViews() {
         btnEdit.setOnClickListener {
             EditMedicineActivity.beginActivityForResult(this, mMedicine!!)
@@ -83,6 +115,10 @@ class MedicineDetailsActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * When user clicks on 'Delete', User is prompted with confirmation dialogue.
+     * This function is one that initiates the dialogue.
+     */
     private fun showDeleteDialogue() {
         val builder = AlertDialog.Builder(this)
         builder.setMessage(R.string.are_you_sure_you_want_to_delete)
@@ -107,6 +143,9 @@ class MedicineDetailsActivity : AppCompatActivity() {
         builder.create().show()
     }
 
+    /**
+     * The loaded is set to the views in screen
+     */
     private fun setData() {
         when (mMedicine?.medicineLangCode) {
             TranslateActivity.LangCode.ENGLISH.code -> {
@@ -123,6 +162,11 @@ class MedicineDetailsActivity : AppCompatActivity() {
         txtMedicineDescription.text = mMedicine?.medicineDescription
     }
 
+    /**
+     * This is a callback function to check the result from further opened activity,i.e, Edit Profile Activity.
+     * If the result from 'EditMedicineActivity' is 'RESULT_OK' only then result for this Activity is set as 'RESULT_OK'.
+     * Which is further used in 'MedicineListActivity'.
+     */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
