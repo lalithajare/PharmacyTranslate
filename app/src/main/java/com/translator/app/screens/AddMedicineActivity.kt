@@ -11,6 +11,12 @@ import com.translator.app.models.Medicine
 import com.translator.app.utils.MyApplication
 import kotlinx.coroutines.*
 
+/**
+ * 1. This Activity opens up when the User comes from 'TranslateActivity' by pressing button 'Add to Device'.
+ * 2. The main function of this class is to save the medicine with description into the locally created database.
+ * 3. The concept of 'Coroutines' in kotlin is used here to the 'Insertion' operation in Database.
+ * 4. The user will save the 'Medicine name'(translated) and 'Medicine description' in Database.
+ */
 class AddMedicineActivity : AppCompatActivity() {
 
     private val TAG = AddMedicineActivity::class.java.simpleName
@@ -30,6 +36,11 @@ class AddMedicineActivity : AppCompatActivity() {
     private lateinit var btnSave: Button
     private lateinit var medicine: Medicine
 
+    /**
+     * This function is Entry point to this Activity
+     *
+     * @param savedInstanceState
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_medicine)
@@ -38,12 +49,20 @@ class AddMedicineActivity : AppCompatActivity() {
         setViews()
     }
 
+
+    /**
+     * Initialize the views in this screen
+     */
     private fun initViews() {
         edtMedicineName = findViewById(R.id.edt_medicine_name)
         edtMedicineDescription = findViewById(R.id.edt_medicine_description)
         btnSave = findViewById(R.id.btn_save)
     }
 
+    /**
+     * Set listeners and values to the views
+     * A listener to button 'Save' is also set over here that has the 'Coroutine' to save the Medicine data in Local Database.
+     */
     private fun setViews() {
         if (!medicine.medicineName.isBlank())
             edtMedicineName.setText(medicine.medicineName)
@@ -59,8 +78,6 @@ class AddMedicineActivity : AppCompatActivity() {
                         ", Medicine Date : ${medicine.medicineDate}, Medicine Description : ${medicine.medicineDescription}," +
                         " Medicine Language Code : ${medicine.medicineLangCode}"
             )
-
-
             GlobalScope.launch(Dispatchers.Main) {
                 val rowId = MyApplication.getPharmacyDB().medicineDao().insertMedicine(medicine)
                 if (rowId != 0L) {

@@ -20,7 +20,15 @@ import com.translator.app.adapters.LanguageAdapter
 import com.translator.app.R
 import com.translator.app.models.Medicine
 
-
+/**
+ * 1. This Activity translates the input by User in selected language(Korean,Vietnamese, English).
+ * 2. After translation user can pass the translated medicine name to 'AddMedicineActivity'
+ * 3. The translation feature is made to work in offline also.
+ * 4. Hence, the language models for korean and Vietnamese will be downloaded in Background thread.
+ * 5. Then, the translation will be allowed to be done.
+ * 6. User will be shown the message conveying that models are being downloaded.
+ *
+ */
 class TranslateActivity : AppCompatActivity() {
 
     companion object {
@@ -29,10 +37,16 @@ class TranslateActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * This enum consists of Language codes
+     */
     enum class LangCode(var code: String) {
         KOREAN("ko"), VIETNAMESE("vi"), ENGLISH("en")
     }
 
+    /**
+     * This List consists of 'Predetermined' set of Languages
+     */
     private val languageList = arrayListOf<Language>(
         Language(
             LangCode.KOREAN.code,
@@ -61,6 +75,9 @@ class TranslateActivity : AppCompatActivity() {
     private var isVietnameseAvailable = false
     private var isKoreanAvailable = false
 
+    /**
+     * This variable keeps the of exactly which language the text is translated to.
+     */
     private var languageTranslated = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -73,7 +90,7 @@ class TranslateActivity : AppCompatActivity() {
     }
 
     /**
-     * Initialize the views
+     * Initialize the views in this screen
      */
     private fun initViews() {
         spnLanguage = findViewById(R.id.spn_language)
@@ -84,7 +101,7 @@ class TranslateActivity : AppCompatActivity() {
     }
 
     /**
-     * Set listeners to the views
+     * Set listeners and values to the views
      */
     private fun setViews() {
         btnTranslate.setOnClickListener {
@@ -106,7 +123,7 @@ class TranslateActivity : AppCompatActivity() {
     }
 
     /**
-     * Set Language adapter
+     * Language adapter for Spinner
      */
     private fun setAdapter() {
         mAdapter = LanguageAdapter(this, languageList)
@@ -114,7 +131,9 @@ class TranslateActivity : AppCompatActivity() {
     }
 
     /**
-     * Start to the process of translation
+     * Starts the process of translation
+     * And then does changes to the field 'languageTranslated' to show which language the text was translated.
+     * After translation, the output text is set the the TextView.
      */
     private fun translateText() {
         var options: FirebaseTranslatorOptions? = null
@@ -149,6 +168,7 @@ class TranslateActivity : AppCompatActivity() {
 
     /**
      * Automatically detects the entered text's language and translates it to English
+     * The input text is required to be of the Language in 'Predetermined' List of Languages (Vietnamese,Korean).
      */
     private fun detectAndTranslateLanguage() {
         var options: FirebaseTranslatorOptions? = null
@@ -189,8 +209,9 @@ class TranslateActivity : AppCompatActivity() {
 
 
     /**
-     * Check if device consists of language models
+     * Checks if device consists of language models
      *  if not then download them
+     *  All the Language models are downloaded from Google's FireBase.
      */
     private fun checkFirebaseLangModels() {
         val modelManager = FirebaseTranslateModelManager.getInstance()
@@ -231,7 +252,7 @@ class TranslateActivity : AppCompatActivity() {
     }
 
     /**
-     * Download the Korean language model
+     * Downloads the Korean language model
      */
     private fun downloadKoreanModel(modelManager: FirebaseTranslateModelManager) {
         val model = FirebaseTranslateRemoteModel.Builder(FirebaseTranslateLanguage.KO)
@@ -251,7 +272,7 @@ class TranslateActivity : AppCompatActivity() {
     }
 
     /**
-     * Download the Vietnamese language model
+     * Downloads the Vietnamese language model
      */
     private fun downloadVietNameseModel(modelManager: FirebaseTranslateModelManager) {
         val model = FirebaseTranslateRemoteModel.Builder(FirebaseTranslateLanguage.VI)

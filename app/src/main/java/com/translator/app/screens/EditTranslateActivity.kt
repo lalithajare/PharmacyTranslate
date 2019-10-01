@@ -22,6 +22,14 @@ import com.translator.app.adapters.LanguageAdapter
 import com.translator.app.models.Language
 import com.translator.app.models.Medicine
 
+/**
+ * 1. This Activity is opened when the TextView -> Medicine Name in 'EditMedicineActivity' is clicked.
+ * 2. After doing translation the result is sent back to 'EditMedicineActivity'.
+ * 3. The working of this Acitivity is similar to 'TranslateActivity'.
+ * 4. The only difference is that this Activity is used for editing purpose.
+ * 5. It only edits the medicine name.
+ * 6. 'Medicine' object is passed from 'EditMedicineActivity' to this Activity
+ */
 class EditTranslateActivity : AppCompatActivity() {
 
     companion object {
@@ -117,13 +125,18 @@ class EditTranslateActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Sets the medicine name as an Input Text for translation
+     *
+     */
     private fun setData() {
         if (!TextUtils.isEmpty(mMedicine?.medicineName))
             edtInputText.setText(mMedicine?.medicineName)
     }
 
+
     /**
-     * Set Language adapter
+     * Language adapter for Spinner
      */
     private fun setAdapter() {
 
@@ -141,6 +154,8 @@ class EditTranslateActivity : AppCompatActivity() {
 
     /**
      * Start to the process of translation
+     * And then does changes to the field 'languageTranslated' to show which language the text was translated.
+     * After translation, the output text is set the the TextView.
      */
     private fun translateText() {
         var options: FirebaseTranslatorOptions? = null

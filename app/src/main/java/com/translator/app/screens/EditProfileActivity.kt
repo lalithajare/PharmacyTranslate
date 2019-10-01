@@ -35,6 +35,12 @@ import kotlinx.coroutines.withContext
 import java.io.File
 
 
+/**
+ * 1. This Activity opens when user clicks on User Profile part in 'MainActivity'
+ * 2. It is used for editing the existing user values.
+ * 3. The updated 'User' object will be saved in Preferences.
+ * 4. The Image of User will be saved in App's Directory.
+ */
 class EditProfileActivity : AppCompatActivity() {
 
     private val TAG = EditProfileActivity::class.java.simpleName
@@ -59,8 +65,18 @@ class EditProfileActivity : AppCompatActivity() {
     private lateinit var btnUpdate: Button
     private lateinit var pgBar: ProgressBar
 
+
+    private var cameraImageUri: Uri? = null
+    private var galleryImageUri: Uri? = null
+
+    /**
+     * This is instance of 'User' object that is loaded from preferences.
+     */
     private val user = Prefs.user
 
+    /**
+     * This is the entry point to Activity
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_profile)
@@ -69,6 +85,9 @@ class EditProfileActivity : AppCompatActivity() {
         setData()
     }
 
+    /**
+     * This function initializes all the views in screen
+     */
     private fun initViews() {
         imgUser = findViewById(R.id.img_user)
         edtName = findViewById(R.id.edt_name)
@@ -79,6 +98,10 @@ class EditProfileActivity : AppCompatActivity() {
         pgBar = findViewById(R.id.pg_bar)
     }
 
+    /**
+     * This function saves the changes done to User object and stores it in preferences.
+     *
+     */
     private fun saveData() {
         setValues()
         Prefs.user = user
@@ -88,6 +111,10 @@ class EditProfileActivity : AppCompatActivity() {
             saveImageInDir(galleryImageUri!!, FileManager.getProfilePicFile())
     }
 
+
+    /**
+     * This function set the listeners to the Views
+     */
     @SuppressLint("NewApi")
     private fun setViews() {
         btnUpdate.setOnClickListener {
@@ -125,6 +152,10 @@ class EditProfileActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * This function shows the "Select image" popup
+     *  From where the User can select if to select 'Camera' or 'Gallery'
+     */
     private fun showImageDialogue() {
         val options = arrayOf<CharSequence>("Take Photo", "Choose From Gallery", "Cancel")
         val builder = AlertDialog.Builder(this)
@@ -144,6 +175,10 @@ class EditProfileActivity : AppCompatActivity() {
     }
 
 
+    /**
+     * This function is used to set the values to User object in this class.
+     * The values come from 'User..object saved in preferences
+     */
     private fun setData() {
         if (user != null) {
             if (FileManager.getProfilePicFile().exists()) {
@@ -164,6 +199,9 @@ class EditProfileActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * This function is used to set the updated values to User object in this class
+     */
     private fun setValues() {
         user?.name = edtName.text.toString().trim()
         user?.height = edtHeight.text.toString().trim().toDouble()
@@ -171,6 +209,10 @@ class EditProfileActivity : AppCompatActivity() {
         user?.medicalConditions = edtMedConds.text.toString().trim()
     }
 
+    /**
+     * This function validates the entered input.
+     * If any one of the value is invalid it returns false else true.
+     */
     private fun validInput(): Boolean {
         if (!TextUtils.isEmpty(edtName.text.toString().trim()))
             if (!TextUtils.isEmpty(edtHeight.text.toString().trim()))
@@ -188,7 +230,9 @@ class EditProfileActivity : AppCompatActivity() {
         return false
     }
 
-
+    /**
+     * This function creates and returns a reference to the FilesDir in Internal memory of App.
+     */
     private fun getOutputUri(): Uri {
         val photoFile = File(filesDir, "ProfilePIC.jpg")
         return FileProvider.getUriForFile(
@@ -198,6 +242,10 @@ class EditProfileActivity : AppCompatActivity() {
         )
     }
 
+    /**
+     * This function creates and start the Camera Intent / MediaStore.ACTION_IMAGE_CAPTURE.
+     *  Hence the Camera is opened up the set request code.
+     */
     private fun getCameraImage() {
         val takePicture = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         takePicture.putExtra(MediaStore.EXTRA_OUTPUT, getOutputUri())
@@ -205,6 +253,10 @@ class EditProfileActivity : AppCompatActivity() {
         startActivityForResult(takePicture, 0)
     }
 
+    /**
+     * This function creates and start the External Content Intent / MediaStore.EXTERNAL_CONTENT_URI.
+     *  Hence the Gallery/File Explorer is opened up the set request code.
+     */
     private fun getGalleryImage() {
         val pickPhoto = Intent(
             Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI
@@ -213,9 +265,11 @@ class EditProfileActivity : AppCompatActivity() {
         startActivityForResult(pickPhoto, 1)
     }
 
-    private var cameraImageUri: Uri? = null
-    private var galleryImageUri: Uri? = null
 
+    /**
+     * This function takes the callback from Gallery screen or Camera
+     *  Then manages the acquired image data chosen by User.
+     */
     override fun onActivityResult(requestCode: Int, resultCode: Int, imageReturnedIntent: Intent?) {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent)
         when (requestCode) {

@@ -34,6 +34,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var relProfile: RelativeLayout
     private lateinit var imgUser: ImageView
 
+    /**
+     * This is the entry point to Activity
+     *
+     * @param savedInstanceState
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -55,6 +60,7 @@ class MainActivity : AppCompatActivity() {
 
     /**
      * This function set the listeners to all the views in screen.
+     * It determines next steps when a particular view is clicked.
      */
     private fun setViews() {
         linTranslate.setOnClickListener {
@@ -71,6 +77,7 @@ class MainActivity : AppCompatActivity() {
 
     /**
      * It loads the image from App's directory to ImageView
+     * It is invoked when the callback from EditProfileActivity is arrived.
      */
     private fun loadUserImage() {
         //Load image from memory
@@ -83,7 +90,7 @@ class MainActivity : AppCompatActivity() {
 
     /**
      * This is a callback function to check the result from further opened activity,i.e, Edit Profile Activity
-     * If the result is
+     * If the result is 'RESULT_OK' only then the function is called.
      */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
