@@ -91,6 +91,7 @@ class MainActivity : AppCompatActivity() {
             .networkPolicy(NetworkPolicy.NO_CACHE)
             .memoryPolicy(MemoryPolicy.NO_CACHE)
             .transform(CircleTransform())
+            .placeholder(R.drawable.ic_user)
             .into(imgUser)
     }
 

@@ -26,6 +26,10 @@ android {
         outputFormat = 'html'
         outputDirectory = "$buildDir/javadoc"
     }
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+    }
 }
 
 dependencies {
