@@ -115,10 +115,12 @@ class EditProfileActivity : AppCompatActivity() {
     private fun saveData() {
         setValues()
         Prefs.user = user
-        if (cameraImageUri != null)
-            saveImageInDir(cameraImageUri!!, FileManager.getProfilePicFile())
-        else
-            saveImageInDir(galleryImageUri!!, FileManager.getProfilePicFile())
+        if (cameraImageUri != null || galleryImageUri != null) {
+            if (cameraImageUri != null)
+                saveImageInDir(cameraImageUri!!, FileManager.getProfilePicFile())
+            else
+                saveImageInDir(galleryImageUri!!, FileManager.getProfilePicFile())
+        }
     }
 
 
@@ -196,6 +198,7 @@ class EditProfileActivity : AppCompatActivity() {
                     .networkPolicy(NetworkPolicy.NO_CACHE)
                     .memoryPolicy(MemoryPolicy.NO_CACHE)
                     .transform(CircleTransform())
+                    .placeholder(R.drawable.ic_user)
                     .into(imgUser)
             }
             if (!TextUtils.isEmpty(user.name)) {

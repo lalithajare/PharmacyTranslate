@@ -102,10 +102,13 @@ class ProfileActivity : AppCompatActivity() {
     private fun saveData() {
         setValues()
         Prefs.user = user
-        if (cameraImageUri != null)
-            saveImageInDir(cameraImageUri!!, FileManager.getProfilePicFile())
-        else
-            saveImageInDir(galleryImageUri!!, FileManager.getProfilePicFile())
+
+        if(cameraImageUri != null || galleryImageUri != null) {
+            if (cameraImageUri != null)
+                saveImageInDir(cameraImageUri!!, FileManager.getProfilePicFile())
+            else
+                saveImageInDir(galleryImageUri!!, FileManager.getProfilePicFile())
+        }
     }
 
     /**
